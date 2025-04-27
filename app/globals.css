@@ -1,3 +1,36 @@
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/WEB/ClashDisplay-Bold.woff2') format('woff2'),
+       url('/fonts/WEB/ClashDisplay-Bold.woff') format('woff'),
+       url('/fonts/TTF/ClashDisplay-Bold.ttf') format('truetype'),
+       url('/fonts/OTF/ClashDisplay-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Add more weights if you have them */
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/WEB/ClashDisplay-Medium.woff2') format('woff2'),
+       url('/fonts/WEB/ClashDisplay-Medium.woff') format('woff'),
+       url('/fonts/TTF/ClashDisplay-Medium.ttf') format('truetype'),
+       url('/fonts/OTF/ClashDisplay-Medium.otf') format('opentype');
+  font-weight: 500;  /* Medium weight */
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clash Display';
+  src: url('/fonts/ClashDisplay-Regular.woff2') format('woff2'),
+       url('/fonts/ClashDisplay-Regular.woff') format('woff'),
+       url('/fonts/ClashDisplay-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @import "tailwindcss";
 @import "tw-animate-css";
 

@@ -1,179 +1,126 @@
-"use client";
-
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import "./rootpage.css";
 import Image from "next/image";
 import Secondpage from "../components/secondpage";
-import Resultcard from "../components/resultcard";
 import Thirdpage from "../components/thirdpage";
-import QuizPage from "../test/page";
+import QuizPage from "../quizpage/page";
+import ResultsSection from "../components/ResultsSection";
+import ScrollEffects from "../components/scrolleffects";
+import FixturesSection from "../components/FixturesSection";
 
-const RootPage = () => {
-  // Using the state for navbar visibility to avoid the unused variable error
-  const [, setShowNavbar] = useState(false);
-  const lastScrollY = useRef(0);
 
-  useEffect(() => {
-    const img = document.querySelector(".fade-in-on-scroll");
+// Data for match results
+const resultArray = [
+  { id: 1, team2: "Sudur Paschim Royals", margin: 45, victory: false, teamLogo: "/sudur.png" },
+  { id: 2, team2: "Janakpur Bolts", margin: 1, victory: false, teamLogo: "/janakpur.png" },
+  { id: 3, team2: "Chitwan Rhinos", margin: 33, victory: true, teamLogo: "/chitwan.png" },
+  /*{ id: 4, team2: "Kathmandu Gurkhas", margin: 18, victory: false, teamLogo: "/kathmandu.png" },
+  { id: 5, team2: "Pokhara Avengers", margin: 10, victory: false, teamLogo: "/pokhara.png" },
+  { id: 6, team2: "Biratnagar Kings", margin: 0, victory: false, teamLogo: "/biratnagar.png" },
+  { id: 7, team2: "Karnali Yaks", margin: 0, victory: false, teamLogo: "/karnali.png" }*/
+];
+const fixturesArray = [
+  { id: 1, team2: "Pokhara Avengers", team2Logo: "/pokhara.png", date: "6 DEC", time: "1:15 PM" },
+  { id: 2, team2: "Kathmandu Gurkhas", team2Logo: "/kathmandu.png", date: "10 DEC", time: "1:15 PM" },
+  { id: 3, team2: "Biratnagar Kings", team2Logo: "/biratnagar.png", date: "12 DEC", time: "9:15 AM" },
+  { id: 4, team2: "Karnali Yaks", team2Logo: "/karnali.png", date: "14 DEC", time: "9:15 AM" }
+];
 
-    const handleScroll = () => {
-      // Trigger fade-in if image is in view
-      if (img) {
-        const rect = img.getBoundingClientRect();
-        if (rect.top < window.innerHeight - 100) {
-          img.classList.add("show");
-        }
-      }
-
-      const currentScrollY = window.scrollY;
-
-      // Navbar visibility logic
-      setShowNavbar(
-        currentScrollY < 100 || currentScrollY < lastScrollY.current
-      );
-
-      lastScrollY.current = currentScrollY;
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    handleScroll(); // Run once on mount
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+export default async function RootPage() {
 
   return (
-<>
-  <div className="relative w-full min-h-screen bg-neutral-800 transparent overflow-hidden">
-    {/* Background Image and Overlays */}
-    <section className='hero-section'>
-    <Image 
-      src="/team.png" 
-      width={2000}
-      height={1000}
-      className='absolute left-1/2 top-3/4 fade-in-on-scroll transform -translate-x-1/2 -translate-y-1/2 w-[80%] max-w-[2000px] object-contain z-10'
-      alt="Team image"
-    />
-    </section>
-    <h1 className="absolute left-1/2 top-2/7 transform -translate-x-1/2 -translate-y-1/2 w-[60%] max-w-[700px] text-center text-5xl md:text-6xl lg:text-7xl font-bold z-10 text-amber-500">
-      Lineup
-    </h1>
-    <Image 
-      src="/heart.png" 
-      width={700}
-      height={350}
-      alt="Hearts" 
-      className="absolute left-1/2 top-2/7 transform -translate-x-1/2 -translate-y-1/2 w-[60%] max-w-[700px] object-contain z-10"
-    />
-    <div className="absolute inset-0 z-10">
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black z-20"></div>
-      <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-black/90 to-transparent z-20"></div>
-      <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-black/90 to-transparent z-20"></div>
-      <div className="absolute bottom-0 left-0 right-0 backdrop-blur-sm z-20"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent to-black opacity-75 z-20"></div>
-      <div className="absolute bottom-0 left-0 right-0 h-1/4 bg-gradient-to-t from-black to-transparent z-21"></div>
+    <>
+      {/* Global background image */}
+      <div className="fixed inset-0 z-[-1] w-full h-full">
+        <Image
+          src="/headerbg.jpg"
+          alt="Background"
+          fill
+          className="object-cover object-center"
+          priority
+          quality={85}
+          sizes="100vw"
+        />
+      </div>
+      
+      <ScrollEffects />
+{/* Hero Section - With adjusted mobile positioning */}
+<div className="relative w-full h-screen overflow-hidden">
+  {/* Single container for positioning both images */}
+  <div className="absolute inset-0 flex items-center md:items-center justify-center">
+    {/* Moved up for mobile by changing items-center to items-start with padding */}
+    <div className="relative w-full h-full flex items-start md:items-center justify-center pt-[5%] md:pt-0 transform scale-[0.95] sm:scale-100 md:scale-110">
+      {/* Ellipse image positioned relative to container */}
+      <Image 
+        src="/ellipse.png" 
+        width={2400}
+        height={1000}
+        className="absolute w-[90%] object-contain sm:scale-100 z-[40] bottom-[40%] md:bottom-[-80%]"
+        alt="Background ellipse"
+        priority
+        unoptimized={true}
+      />
+      
+      {/* Team image positioned relative to container */}
+      <Image 
+        src="/team.png" 
+        width={1500}
+        height={1000}
+        className="absolute w-[1000%] md:w-[65%] object-contain z-[60] bottom-[40%] md:bottom-0"
+        alt="Team image"
+        priority
+        unoptimized={true}
+      />
     </div>
-
-    {/* Roaring Lion */}
-    <Image
-      src="/lionroar.png"
-      width={500}
-      height={400}
-      alt="Roaring Lion"
-      className="absolute left-0 max-w-full top-[1px] w-64 sm:w-[400px] object-contain overflow-hidden md:w-[500px] h-auto z-0 opacity-80"
-    />
   </div>
-  <div className="bg-black">
-  {/* Results Section */}
- <div className="relative transparent z-30 pt-10">
-    {/* Results array */}
-    {(() => {
-      // Import or define the ResultType type to match what Resultcard expects      
-      const resultarray = [
-        {
-          id: 1,
-          team2: "Sudur Paschim Royals",
-          margin: 45,
-          victory: false,
-          teamLogo: "/sudur.png"
-        },
-        {
-          id: 2,
-          team2: "Janakpur Bolts",
-          margin: 1,
-          victory: false,
-          teamLogo: "/janakpur.png"
-        },
-        {
-          id: 3,
-          team2: "Chitwan Rhinos",
-          margin: 33,
-          victory: true,
-          teamLogo: "/chitwan.png"
-        },
-        {
-          id: 4,
-          team2: "Kathmandu Gurkhas",
-          margin: 18,
-          victory: false,
-          teamLogo: "/kathmandu.png"
-        },
-        {
-          id: 5,
-          team2: "Pokhara Avengers",
-          margin: 10,
-          victory: false,
-          teamLogo: "/pokhara.png"
-        },
-        {
-          id: 6,
-          team2: "Biratnagar Kings",
-          margin: 0,
-          victory: false,
-          teamLogo: "/biratnagar.png"
-        },
-        {
-          id: 7,
-          team2: "Karnali Yaks",
-          margin: 0,
-          victory: false,
-          teamLogo: "/karnali.png"
-        }
-      ];
-      
-      
-      return (
-        <div className="w-full max-w-6xl mx-auto px-4">
-          <div className="bg-black/40 backdrop-blur-sm rounded-3xl border-[1.5px] border-amber-500 p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-light text-sm sm:text-base">
-              {resultarray.map(element => (
-          <Resultcard key={element.id} result={element} />
-              ))}
-            </div>
+{/* Gradient overlay - extend higher and lower on mobile */}
+<div className="absolute bottom-[28%] md:bottom-0 left-0 right-0 h-[40%] md:h-1/6 bg-gradient-to-t from-[#06101B] via-[#06101B]/90 to-transparent z-[90]"></div>
+  {/* Sponsors section - moved higher on mobile */}
+  <div className="absolute bottom-[30%] md:bottom-0 left-0 w-full z-[110]">
+    <div className="container mx-auto px-4 md:px-8">
+      <div className="grid grid-cols-4 md:grid-cols-8 gap-4 sm:gap-6 md:gap-8">
+        {[
+          { src: "/ncell.png", alt: "Ncell" },
+          { src: "/buddhaair.png", alt: "Buddha Air" },
+          { src: "/hilife.png", alt: "Hi-Life" },
+          { src: "/babu88.png", alt: "Babu88" },
+          { src: "/yeti.png", alt: "Yeti Airlines" },
+          { src: "/fortuna.png", alt: "Fortuna" },
+          { src: "/nidpil.png", alt: "NIDPIL" },
+          { src: "/folliderm.png", alt: "Folliderm" }
+        ].map((sponsor, index) => (
+          <div key={index} className="flex justify-center items-center">
+            <Image 
+              src={sponsor.src}
+              width={300}
+              height={300}
+              alt={sponsor.alt}
+              className="h-8 sm:h-10 w-auto object-contain opacity-100 hover:opacity-100 transition-all duration-300 hover:scale-110 brightness-[1.5] contrast-[1.1]"
+              style={{ filter: "brightness(3) contrast(1.8)" }}
+            />
           </div>
-        </div>
-      );
-    })()}
+        ))}
+      </div>
+    </div>
   </div>
+</div>
 
-  <div className="relative pb-48 bg-transparent">
-    <Image 
-      data-layer="Sponsers" 
-      width={1096}
-      height={192}
-      className="absolute left-1/2 transform -translate-x-1/2 w-[1096px] h-48 z-30 bg-transparent" 
-      src="/sponsors.png" 
-      alt="Sponsors"
-    />
+
+{/* Bottom Sections - responsive margin adjustment */}
+<div className="relative bg-[#06101B] mt-[-50%] md:mt-[-1px]">
+  {/* Semi-transparent background for better readability */}
+  <div className="absolute inset-0 bg-[#06101B] z-1"></div>
+  <div className="relative z-10">
+    <div className="pt-10">
+      <ResultsSection results={resultArray} />
+    </div>
+    <FixturesSection fixtures={fixturesArray} />
+
+    <QuizPage />
+    <Secondpage />
+    <Thirdpage />
   </div>
-  </div>
-  <QuizPage/>
-  
-  {/*2nd page */}
-  <Secondpage/>
-  {/*3rd page */}
-  <Thirdpage />
-</>
-);
+</div>
+    </>
+  );
 }
-export default RootPage;

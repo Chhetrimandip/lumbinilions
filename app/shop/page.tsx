@@ -17,21 +17,21 @@ const shoppage = () => {
             id: 2,
             name: "Lumbini Lions Away Jersey",
             price: "55.99",
-            image: "/jerseyaway.png",
+            image: "/awayjersey.jpeg",
             isFeatured: false
         },
         {
             id: 3,
             name: "Lumbini Lions Cap",
             price: "25.99",
-            image: "/cap.png",
+            image: "/cap.jpeg",
             isFeatured: false
         },
         {
             id: 4,
             name: "Lumbini Lions Mug",
             price: "15.99",
-            image: "/mug.png",
+            image: "/mug.jpeg",
             isFeatured: false
         },
         {

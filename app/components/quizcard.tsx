@@ -2,22 +2,12 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { QuizCardProps } from '@/lib/types'
+import { createFan } from '../actions/action'
+import Leaderboard from './leaderboard'
 
-// Define the Quiz Question Type
-interface QuizQuestion {
-  id: number;
-  question: string;
-  options: string[];
-  correctAnswer: number; // Index of the correct option
-  answerimage: string;
-  answertext: string; // Additional interesting fact
-}
+const QuizCard: React.FC<QuizCardProps> = ({ questions, leaderboard = [] }) => {
 
-interface QuizCardProps {
-  questions: QuizQuestion[];
-}
-
-const QuizCard: React.FC<QuizCardProps> = ({ questions }) => {
   // State to track if quiz has started
   const [quizStarted, setQuizStarted] = useState(false);
   // State to track current question index
@@ -33,22 +23,47 @@ const QuizCard: React.FC<QuizCardProps> = ({ questions }) => {
   // State to control answer reveal animation
   const [showAnswer, setShowAnswer] = useState(false);
   // Timer state (in seconds)
-  const [timeLeft, setTimeLeft] = useState(120); // 2 minutes = 120 seconds
+  const [time, setTime] = useState(0); // 2 minutes = 120 seconds
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  
+  // Clear timer on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
+  
+    // Ensure questions array is not empty
+    if (!questions || questions.length === 0) {
+      return (
+        <div className="min-h-screen bg-neutral-900 pt-40 pb-16 px-4 flex justify-center items-center">
+          <div className="bg-neutral-800/80 backdrop-blur-sm rounded-lg shadow-lg p-6 md:p-10 text-center">
+            <h2 className="text-2xl md:text-3xl font-['Bebas_Neue'] text-white mb-4">
+              Quiz questions are loading...
+            </h2>
+            <p className="text-gray-300 text-base mb-8">
+              Please try again in a moment
+            </p>
+          </div>
+        </div>
+      );
+    }
   // Start the quiz
   const startQuiz = () => {
     setQuizStarted(true);
     // Start timer
     timerRef.current = setInterval(() => {
-      setTimeLeft(prevTime => {
-        if (prevTime <= 1) {
+      setTime(prevTime => {
+        if (prevTime >= 120) {
           // Time's up
           clearInterval(timerRef.current!);
           setQuizCompleted(true);
           return 0;
         }
-        return prevTime - 1;
+        return prevTime + 1;
       });
     }, 1000);
   };
@@ -72,7 +87,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ questions }) => {
     
     setAnswerChecked(true);
     
-    if (selectedOption === questions[currentQuestion].correctAnswer) {
+    if (selectedOption === questions[currentQuestion].correctanswer) {
       setScore(score + 1);
     }
     
@@ -113,35 +128,27 @@ const QuizCard: React.FC<QuizCardProps> = ({ questions }) => {
     setQuizCompleted(false);
     setAnswerChecked(false);
     setShowAnswer(false);
-    setTimeLeft(120);
+    setTime(0);
   };
 
-  // Clear timer on unmount
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-    };
-  }, []);
 
   return (
-    <div className="min-h-screen bg-neutral-900 pt-40 pb-16 px-4">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-4xl font-['Bebas_Neue'] text-amber-500 mb-6 text-center">
-          <span className="text-amber-500">|</span> CRICKET QUIZ
-        </h1>
+    <div className="min-h-screen bg-[#06101B] pt-40 pb-16 px-4">
+    <div className="max-w-3xl mx-auto">
+      <h1 className="text-4xl font-['Bebas_Neue'] text-amber-500 mb-6 text-center">
+        <span className="text-amber-500">|</span> CRICKET QUIZ
+      </h1>
 
-        {!quizStarted ? (
-          // Quiz start screen
-          <div className="bg-neutral-800/80 backdrop-blur-sm rounded-lg shadow-lg p-6 md:p-10 text-center animate-fade-in">
-            <Image 
-              src="/crickettrophy.png" 
-              alt="Cricket Trophy" 
-              width={128}
-              height={128}
-              className="w-32 h-32 mx-auto mb-6 object-contain"
-            />
+      {!quizStarted ? (
+        // Quiz start screen
+        <div className="bg-neutral-800/80 backdrop-blur-sm rounded-lg shadow-lg p-6 md:p-10 text-center animate-fade-in">
+          <Image 
+            src="/crickettrophy.png" 
+            alt="Cricket Trophy" 
+            width={128}
+            height={128}
+            className="w-32 h-32 mx-auto mb-6 object-contain"
+          />
             <h2 className="text-2xl md:text-3xl font-['Bebas_Neue'] text-white mb-4">
               Test Your Cricket Knowledge!
             </h2>
@@ -157,6 +164,9 @@ const QuizCard: React.FC<QuizCardProps> = ({ questions }) => {
             >
               START QUIZ!
             </button>
+            <div>
+              <Leaderboard leaderboard={leaderboard} />
+            </div>
           </div>
         ) : !quizCompleted ? (
           <div className="bg-neutral-800/80 backdrop-blur-sm rounded-lg shadow-lg p-5 md:p-7">
@@ -171,15 +181,15 @@ const QuizCard: React.FC<QuizCardProps> = ({ questions }) => {
                 </span>
               </div>
               <div className={`px-3 py-1 rounded-full ${
-                timeLeft > 30 ? 'bg-green-700/50' : timeLeft > 10 ? 'bg-amber-700/50' : 'bg-red-700/50'
+                time < 30 ? 'bg-green-700/50' : time < 60 ? 'bg-amber-700/50' : 'bg-red-700/50'
               } flex items-center`}>
                 <svg className="w-4 h-4 mr-1 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span className={`text-sm font-mono ${
-                  timeLeft > 30 ? 'text-white' : timeLeft > 10 ? 'text-amber-300' : 'text-red-300'
+                  time < 30 ? 'text-white' : time < 60 ? 'text-amber-300' : 'text-red-300'
                 }`}>
-                  {formatTime(timeLeft)}
+                  {formatTime(time)}
                 </span>
               </div>
             </div>
@@ -196,17 +206,23 @@ const QuizCard: React.FC<QuizCardProps> = ({ questions }) => {
               
               {/* Image - Fades in when answered */}
               {answerChecked && (
-                <div className={`absolute inset-0 transition-all duration-500 flex justify-center
-                  ${showAnswer ? 'opacity-100 transform scale-100' : 'opacity-0 scale-95'}`}>
-                  <Image 
-                    src={`/${questions[currentQuestion].answerimage}`} 
-                    alt="Answer visual" 
-                    width={400}
-                    height={200}
-                    className="h-full object-contain max-h-[200px] rounded-lg"
-                  />
-                </div>
-              )}
+  <div className={`absolute inset-0 transition-all duration-500 flex flex-col items-center justify-center
+    ${showAnswer ? 'opacity-100 transform scale-100' : 'opacity-0 scale-95'}`}>
+    {/* Always show the correct answer text */}
+    <div className="text-amber-300 text-xl font-['Bebas_Neue'] mb-4">
+      Correct Answer: {questions[currentQuestion].options[questions[currentQuestion].correctanswer]}
+    </div>
+    
+    {/* Use a placeholder for all answers */}
+    <div className="bg-amber-500/20 border-2 border-amber-500 rounded-lg p-6 flex items-center justify-center" 
+         style={{width: '400px', height: '200px'}}>
+      <p className="text-amber-300 text-lg font-bold text-center">
+        {questions[currentQuestion].answertext.substring(0, 150)}
+        {questions[currentQuestion].answertext.length > 150 ? '...' : ''}
+      </p>
+    </div>
+  </div>
+)}
             </div>
 
             {/* Options */}
@@ -217,7 +233,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ questions }) => {
                   onClick={() => handleOptionSelect(index)}
                   className={`p-3 rounded-lg cursor-pointer transition-all duration-300 flex items-center
                     ${answerChecked 
-                      ? index === questions[currentQuestion].correctAnswer
+                      ? index === questions[currentQuestion].correctanswer
                         ? 'bg-green-500/20 border-2 border-green-500'
                         : selectedOption === index 
                           ? 'bg-red-500/20 border-2 border-red-500 opacity-70'
@@ -229,7 +245,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ questions }) => {
                 >
                   <p className="text-white text-base flex-grow">{option}</p>
                   {answerChecked && (
-                    index === questions[currentQuestion].correctAnswer ? (
+                    index === questions[currentQuestion].correctanswer ? (
                       <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
@@ -281,13 +297,13 @@ const QuizCard: React.FC<QuizCardProps> = ({ questions }) => {
           // Quiz Results
           <div className="bg-neutral-800/80 backdrop-blur-sm rounded-lg shadow-lg p-5 md:p-7 text-center animate-fade-in">
             <h2 className="text-2xl md:text-3xl font-['Bebas_Neue'] text-amber-500 mb-4">
-              {timeLeft === 0 ? "TIME'S UP!" : "QUIZ COMPLETED!"}
+              {time === 120 ? "TIME'S UP!" : "QUIZ COMPLETED!"}
             </h2>
             <p className="text-white text-lg mb-3">
               Your Score: {score} out of {questions.length}
             </p>
             <p className="text-white text-lg mb-6">
-              {timeLeft === 0 && score < questions.length * 0.7 
+              {time === 120 && score < questions.length * 0.7 
                 ? "You ran out of time! Try again and see if you can answer faster."
                 : score === questions.length 
                   ? "Perfect! You're a cricket master!" 
@@ -296,7 +312,64 @@ const QuizCard: React.FC<QuizCardProps> = ({ questions }) => {
                     : "Nice try! Keep learning about cricket!"}
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-3 mb-4">
-              <button
+            <form action={async (formData: FormData) => {
+              await createFan(formData);
+            }} className="w-full max-w-md mx-auto mb-6 space-y-3">
+  <div className="space-y-3">
+    <input 
+      name="name" 
+      placeholder="Your Name" 
+      className="w-full px-4 py-2 bg-neutral-700 text-white placeholder-neutral-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+      required
+    />
+    <input 
+      name="phone" 
+      placeholder="Phone Number" 
+      className="w-full px-4 py-2 bg-neutral-700 text-white placeholder-neutral-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+      required
+    />
+    <input 
+      name="email" 
+      placeholder="Email Address" 
+      type="email"
+      className="w-full px-4 py-2 bg-neutral-700 text-white placeholder-neutral-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+      required
+    />
+    
+    {/* Score field - read-only with actual score */}
+    <div className="flex items-center w-full px-4 py-2 bg-neutral-700 text-white rounded-lg border border-amber-500/30">
+      <span className="text-amber-400 mr-2">Your Score:</span>
+      <span className="font-bold">{score} / {questions.length}</span>
+      <input 
+        name="score" 
+        type="hidden"
+        value={score}
+        readOnly
+      />
+    </div>
+    
+    {/* Time taken - hidden input */}
+    <div className="flex items-center w-full px-4 py-2 bg-neutral-700 text-white rounded-lg border border-amber-500/30">
+      <span className="text-amber-400 mr-2">Time Taken:</span>
+      <span className="font-bold">{formatTime(time)}</span>
+      <input 
+        name="time" 
+        type="hidden"
+        value={time}
+        readOnly
+      />
+    </div>
+  </div>
+  
+  <button 
+    type="submit"
+    className="w-full px-5 py-3 rounded-lg bg-amber-500 hover:bg-amber-600 text-black text-base font-['Bebas_Neue'] transition-transform hover:scale-105"
+  >
+    GET YOUR PREMIUM MERCHANDISE
+  </button>
+</form>
+            </div>
+            <button
                 onClick={resetQuiz}
                 className="px-5 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-black text-base font-['Bebas_Neue'] transition-transform hover:scale-105"
               >
@@ -307,7 +380,6 @@ const QuizCard: React.FC<QuizCardProps> = ({ questions }) => {
                   BACK TO HOME
                 </button>
               </Link>
-            </div>
           </div>
         )}
       </div>

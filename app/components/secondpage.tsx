@@ -26,14 +26,14 @@ const Secondpage = () => {
 
             {/* Side decorative images */}
             <Image
-                className="hidden object-contain lg:block absolute top-[200px] overflow-hidden left-0 w-44 rotate-0 z-10"
+                className="hidden object-contain lg:block absolute h-auto top-[200px] overflow-hidden left-0 w-44 rotate-0 z-10"
                 src="/lionroar.png"
                 alt="Left lion decoration"
                 width={176}
                 height={176}
             />
             <Image
-                className="hidden lg:block object-contain absolute top-[200px] overflow-hidden right-0 w-44 rotate-0 z-10"
+                className="hidden lg:block object-contain absolute top-[200px] h-auto overflow-hidden right-0 w-44 rotate-0 z-10"
                 src="/lionroarinverted.png"
                 alt="Right lion decoration"
                 width={176}

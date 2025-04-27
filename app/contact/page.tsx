@@ -32,9 +32,9 @@ const contactpage = () => {
                 <div className="mt-6">
                 <h3 className="text-lg font-medium mb-2">Follow Us</h3>
                 <div className="flex space-x-4">
-                    <a href="#" className="hover:text-blue-600">Facebook</a>
+                    <a href="https://www.facebook.com/lumbinilions" className="hover:text-blue-600">Facebook</a>
                     <a href="#" className="hover:text-blue-400">Twitter</a>
-                    <a href="#" className="hover:text-pink-600">Instagram</a>
+                    <a href="https://www.instagram.com/lumbinilions/" className="hover:text-pink-600">Instagram</a>
                 </div>
                 </div>
             </div>

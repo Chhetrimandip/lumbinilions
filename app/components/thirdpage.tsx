@@ -7,7 +7,7 @@ const Thirdpage = () => {
             {/* Background Image with Overlay */}
             <div className="absolute inset-0 z-0">
             <Image
-                src="/stadium-bg.jpg"
+                src="/headerbg.jpg"
                 alt="Cricket Stadium"
                 fill
                 className="object-cover"

@@ -12,32 +12,47 @@ interface ResultProp {
 
 const Resultcard: FC<{ result: ResultProp['result'] }> = ({ result }) => {
   return (
-    <div className="overflow-hidden bg-white/10 hover:bg-white/20 transition-colors duration-300 px-4 py-3 sm:px-6 sm:py-4 rounded-lg shadow-md flex flex-col sm:flex-row justify-between items-center w-full gap-3 sm:gap-0">
-      {/* Left Side: Logo and Match */}
-      <div className="flex items-center gap-3 max-w-[65%] sm:max-w-[70%] mb-2 sm:mb-0">
-        <Image
-          src={result.teamLogo}
-          alt="Team Logo"
-          width={48}  // 12 * 4 = 48px for the largest size
-          height={48}
-          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white shadow-md flex-shrink-0"
-        />
-        <div className="text-white overflow-hidden">
-          <div className="text-sm sm:text-base font-medium text-xl tracking-wide ">
-            Lumbini Lions <span className="text-gray-300 text-xs mx-1">vs</span> {result.team2}
+    <div className="overflow-hidden bg-[#0c1924] hover:bg-[#162636] transition-all duration-300 rounded-lg shadow-lg border border-amber-900/20">
+      <div className="flex flex-col sm:flex-row items-center w-full">
+        {/* Lumbini Lions Section */}
+        <div className="flex-1 flex flex-col items-center py-4 px-6">
+          <div className="mb-2">
+            <Image
+              src="/logo.png"
+              alt="Lumbini Lions Logo"
+              width={120}
+              height={120}
+              className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-lg"
+            />
           </div>
+          <span className="text-amber-500 font-bold text-sm sm:text-base text-center">LUMBINI LIONS</span>
         </div>
-      </div>
-
-      {/* Right Side: Result */}
-      <div
-        className={`text-sm sm:text-base font-medium ${
-          result.victory ? 'text-green-400' : 'text-red-400'
-        } flex items-center flex-shrink-0`}
-      >
-        <span>{result.victory ? 'Won' : 'Lost'}</span>
-        <span className="text-xs text-gray-300 mx-1">by</span>
-        <span className="font-semibold">{result.margin.toString()}</span>
+        
+        {/* Match Result Section */}
+        <div className="py-4 px-6 flex flex-col items-center bg-black/20 w-full sm:w-auto">
+          <div className="flex items-center justify-center gap-3">
+            <span className={`text-xl sm:text-2xl font-bold ${result.victory ? 'text-green-500' : 'text-red-500'}`}>
+              {result.victory ? 'Won' : 'Lost'}
+            </span>
+            <span className="text-xs text-gray-400 mx-1">by</span>
+            <span className="text-xl sm:text-2xl font-bold text-amber-500">{result.margin}</span>
+          </div>
+          <div className="text-xs text-gray-400 mt-1">runs/wickets</div>
+        </div>
+        
+        {/* Opponent Section */}
+        <div className="flex-1 flex flex-col items-center py-4 px-6">
+          <div className="mb-2">
+            <Image
+              src={result.teamLogo}
+              alt={`${result.team2} Logo`}
+              width={120}
+              height={120}
+              className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-lg"
+            />
+          </div>
+          <span className="text-white font-bold text-sm sm:text-base text-center">{result.team2.toUpperCase()}</span>
+        </div>
       </div>
     </div>
   );

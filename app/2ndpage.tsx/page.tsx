@@ -23,7 +23,7 @@ const Secondpage = () => {
                 <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black to-transparent"></div>
             </div>
 
-            {/* Side decorative images */}
+            {/* Side decorative images 
             <Image
                 className="hidden object-contain lg:block absolute top-[200px] overflow-hidden left-0 w-44 rotate-0 z-10"
                 src="/lionroar.png"
@@ -37,7 +37,7 @@ const Secondpage = () => {
                 alt="Lion decoration right"
                 width={176}
                 height={176}
-            />
+            /> */}
 
             {/* Content container with proper z-index */}
             <div className="relative z-20">
