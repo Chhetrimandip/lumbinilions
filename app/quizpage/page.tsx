@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import React from 'react'
 import QuizCard from '../components/quizcard'
 import { prisma } from '@/lib/db'  // Use the singleton import
@@ -30,20 +31,16 @@ const QuizPage = async () => {
     
     // Use quiz (lowercase) instead of quizzy
 
-    const dbQuestions = await prisma.quizzy.findMany({
-      take: 5,
-      orderBy: {
-      // This randomizes the selection
-      id: 'asc',
-      },
-      // Adding this to get a random subset each time
-      skip: Math.floor(Math.random() * await prisma.quizzy.count()),
-    });
+    const dbQuestions = await prisma.quizzy.findMany();
+
+    const shuffledQuestions = dbQuestions
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 5);
     console.log(`Found ${dbQuestions.length} questions in database`);
     
     if (dbQuestions && dbQuestions.length > 0) {
       // No mapping needed if your schema and component both use lowercase
-      quizQuestions = dbQuestions;
+      quizQuestions = shuffledQuestions;
       console.log("Got database questions successfully");
     } else {
       console.log("No database questions found, using fallback");

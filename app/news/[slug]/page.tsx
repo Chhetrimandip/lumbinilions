@@ -1,4 +1,5 @@
 // app/news/[slug]/page.tsx
+export const dynamic = 'force-dynamic';
 import React from 'react'
 import { prisma } from '@/lib/db'
 import { parseEditorJSContent } from '@/lib/editorjs-parser'
