@@ -101,14 +101,13 @@ const QuizCard: React.FC<QuizCardProps> = ({ questions, leaderboard = [] }) => {
       timerRef.current = null;
     }
   };
-
   // Modified startQuiz function
   const startQuiz = () => {
     setQuizStarted(true);
     // Start timer
     timerRef.current = setInterval(() => {
       setTime(prevTime => {
-        if (prevTime >= 120) {
+        if (prevTime >= 60) {
           // Time's up
           clearInterval(timerRef.current!);
           setQuizCompleted(true);
@@ -226,9 +225,8 @@ const QuizCard: React.FC<QuizCardProps> = ({ questions, leaderboard = [] }) => {
             </div>
             <h2 className="text-2xl md:text-3xl font-['poppins'] text-white mb-4">
               Test Your Cricket Knowledge!
-            </h2>
-            <p className="text-gray-300 text-base mb-8">
-              Answer {questions.length} questions about cricket and test your knowledge. You have 2 minutes to complete the quiz.
+            </h2>            <p className="text-gray-300 text-base mb-8">
+              Answer {questions.length} questions about cricket and test your knowledge. You have 60 seconds to complete the quiz.
             </p>
             
             {/* Leaderboard preview */}
@@ -251,8 +249,7 @@ const QuizCard: React.FC<QuizCardProps> = ({ questions, leaderboard = [] }) => {
   <div className="flex justify-between items-center mb-6">
     <p className="text-white font-semibold">
       Question {currentQuestion + 1} of {questions.length}
-    </p>
-    <p className={`font-mono font-bold ${time >= 100 ? 'text-red-500' : 'text-amber-500'}`}>
+    </p>    <p className={`font-mono font-bold ${time >= 50 ? 'text-red-500' : 'text-amber-500'}`}>
       {formatTime(time)}
     </p>
   </div>
@@ -287,19 +284,10 @@ const QuizCard: React.FC<QuizCardProps> = ({ questions, leaderboard = [] }) => {
       ))}
     </div>
   </div>
-  
-  {/* Answer explanation (shown after checking) */}
+    {/* Answer explanation (shown after checking) */}
   {showAnswer && (
     <div className="mt-6 p-4 bg-neutral-700/50 rounded-lg">
-      <div className="flex flex-col items-center mb-4">
-        <div className="relative w-full h-48 mb-3">
-          <Image
-            src={`/quiz/${questions[currentQuestion].answerimage}`}
-            alt="Answer explanation"
-            fill
-            className="object-contain rounded"
-          />
-        </div>
+      <div className="flex flex-col mb-4">
         <p className="text-white text-sm">{questions[currentQuestion].answertext}</p>
       </div>
     </div>
@@ -347,18 +335,17 @@ const QuizCard: React.FC<QuizCardProps> = ({ questions, leaderboard = [] }) => {
       <div></div> // Empty placeholder to maintain flex layout
     )}
   </div>
-</div>
-        ) : (
+</div>        ) : (
           // Quiz Results - modified to use the new submit handler
           <div className="bg-neutral-800/80 backdrop-blur-sm rounded-lg shadow-lg p-5 md:p-7 text-center animate-fade-in">
             <h2 className="text-2xl md:text-3xl font-['poppins'] text-amber-500 mb-4">
-              {time === 120 ? "TIME'S UP!" : "QUIZ COMPLETED!"}
+              {time === 60 ? "TIME'S UP!" : "QUIZ COMPLETED!"}
             </h2>
             <p className="text-white text-lg mb-3">
               Your Score: {score} out of {questions.length}
             </p>
             <p className="text-white text-lg mb-6">
-              {time === 120 && score < questions.length * 0.7 
+              {time === 60 && score < questions.length * 0.7 
                 ? "You ran out of time! Try again tomorrow."
                 : score === questions.length 
                   ? "Perfect! You're a cricket master!" 

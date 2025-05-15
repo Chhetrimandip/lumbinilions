@@ -9,7 +9,7 @@ const QuizPage = async () => {
             orderBy: {
                 score: 'desc',
             },
-            take: 10,
+            take: 5,
         });
   let quizQuestions: QuizQuestion[] = [];
   
