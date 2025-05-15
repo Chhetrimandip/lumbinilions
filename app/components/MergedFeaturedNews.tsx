@@ -43,6 +43,8 @@ function MergedFeaturedNews({
           />
           
           {/* NEWS text positioned over the shield */}
+          {/* NEWS text positioned over the shield */}
+          
           <h1 className="absolute text-4xl md:text-6xl lg:text-7xl text-white hidden md:block font-bold font-['poppins'] tracking-wider z-20">
             NEWS
           </h1>
